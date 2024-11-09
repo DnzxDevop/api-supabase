@@ -13,8 +13,7 @@ const supabase = createClient(supabaseUrl, supabaseKey);
 
 app.use(bodyParser.json());
 
-// Endpoint para verificar se o IP está na whitelist
-// Endpoint para verificar se o IP está na whitelist
+
 app.post('/check-ip', async (req, res) => {
     const { ip } = req.body;
 
@@ -23,22 +22,22 @@ app.post('/check-ip', async (req, res) => {
     }
 
     try {
-        // Verifica se o IP está na tabela allowed_ips
+     
         const { data: allowedIp, error: fetchError } = await supabase
             .from('allowed_ips')
             .select('*')
             .eq('ip', ip)
-            .single(); // Retorna um único objeto ou erro se não houver
+            .single(); 
 
-        // Verifica se houve um erro na busca
+
         if (fetchError && fetchError.code !== 'PGRST116') {
             console.error('Erro ao buscar IP:', fetchError);
             return res.status(500).json({ error: 'Erro ao verificar IP.' });
         }
 
-        // Se allowedIp for null, o IP não está na whitelist
+
         if (!allowedIp) {
-            return res.status(403).json({ error: 'IP não permitido.' }); // Resposta 403 se o IP não estiver na whitelist
+            return res.status(403).json({ error: 'IP não permitido.' });
         }
 
         return res.status(200).json({ status: 'success', message: 'IP permitido.' });
@@ -49,7 +48,7 @@ app.post('/check-ip', async (req, res) => {
 });
 
 
-// Endpoint para receber dados
+
 app.post('/endpoint', async (req, res) => {
     const { ip, message } = req.body;
 
@@ -57,11 +56,11 @@ app.post('/endpoint', async (req, res) => {
         return res.status(400).json({ error: 'IP e mensagem são obrigatórios.' });
     }
 
-    // Gera um ID de 256 bits usando SHA-256
+ 
     const id = crypto.randomBytes(32).toString('hex'); // 32 bytes = 256 bits
 
     try {
-        // Verificar se o IP já existe
+  
         const { data: existingIp, error: fetchError } = await supabase
             .from('ips')
             .select('*')
@@ -73,11 +72,11 @@ app.post('/endpoint', async (req, res) => {
             return res.status(500).json({ error: 'Erro ao verificar IP.' });
         }
 
-        // Se o IP não existir, insira-o na tabela
+ 
         if (!existingIp) {
             const { error: insertError } = await supabase
                 .from('ips')
-                .insert([{ id, ip }]); // Adiciona o ID gerado
+                .insert([{ id, ip }]); 
 
             if (insertError) {
                 console.error('Erro ao inserir IP:', insertError);
