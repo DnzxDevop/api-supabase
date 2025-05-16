@@ -1,4 +1,3 @@
-# IP Logger com Supabase
 
 Este projeto é uma API simples em Node.js com Express que interage com o Supabase para verificar e registrar endereços IP.
 
